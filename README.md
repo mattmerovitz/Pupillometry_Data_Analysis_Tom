@@ -1,2 +1,2 @@
-# Pupillometry_Data_Analysis_StarterCode_Tom2
- Tom's Study Pup Data Analysis Code
+# Pupillometry_Data_Analysis_Tom
+Code to take data from the pupillometer and convert it to usable data. 
