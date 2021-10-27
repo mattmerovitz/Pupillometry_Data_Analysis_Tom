@@ -53,10 +53,10 @@ if allOrNot == 'n'
     whichSubset = input('What subset of the data?\n    - "Correct" for 100% correct trials\n    - "Grammatical" for all grammatical response trials\n->', 's');
     if strcmp(whichSubset, 'Correct')
         sheet = '100correct';
-        display('You are analyzing 100% correct trials');
+        disp('You are analyzing 100% correct trials');
     elseif strcmp(whichSubset, 'Grammatical')
         sheet = 'grammaticalerrors';
-        display('You are analyzing all grammatical trials');
+        disp('You are analyzing all grammatical trials');
     end
     % Read in subject scores for excluding trials
     excelSheetRange = 'A1:Q37';
@@ -212,6 +212,7 @@ end
 %=== save output as a csv file, dated =====================================
 
 saveName = input('Give a file name for the output data: ', 's');
+cd('../../1Data/5FinalOutput');
 csvwrite([saveName date '.csv'], procData);
-
+cd('../../2ProcessingCodes/Processing');
 %============================================= Preprocessing complete =====
