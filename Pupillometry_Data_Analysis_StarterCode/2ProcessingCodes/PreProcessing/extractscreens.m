@@ -7,7 +7,7 @@ function [blackScreen1, whiteScreen1, blackScreen2, whiteScreen2] = extractscree
     whiteScreen2 = table;
 
     % Variables
-    sampleMessageCol = 3;
+    sampleMessageCol = 4;
     s1 = size(screens1);
     s2 = size(screens2);
     sectionCol = s1(2)+1;
@@ -21,26 +21,26 @@ function [blackScreen1, whiteScreen1, blackScreen2, whiteScreen2] = extractscree
     
     % Label each row with its section in the screen data
     section = 0;
-    for i = 1:s1(1);
-        if mod(i,1000) == 0;
-            display(i)      %% <-- output to see progress of function
-        end;
-        if  strncmpi(screens1{i,sampleMessageCol}, '.',1)~=1;
+    for i = 1:s1(1)
+        if mod(i,1000) == 0
+            disp(i)      %% <-- output to see progress of function
+        end
+        if  strncmpi(screens1{i,sampleMessageCol}, '.',1)~=1
             section = section + 1;
-        end;
+        end
         screens1{i,sectionCol} = section;
-    end;
+    end
     
     section = 0;
-    for i = 1:s2(1);
-        if mod(i,1000) == 0;
-            display(i)      %% <-- output to see progress of function
-        end;
-        if  strncmpi(screens2{i,sampleMessageCol}, '.',1)~=1;
+    for i = 1:s2(1)
+        if mod(i,1000) == 0
+            disp(i)      %% <-- output to see progress of function
+        end
+        if  strncmpi(screens2{i,sampleMessageCol}, '.',1)~=1
             section = section + 1;
-        end;
+        end
         screens2{i,sectionCol} = section;
-    end;
+    end
     
 %     % If all messages were included
 %     % blackScreen = section1, whiteScreen = section2
@@ -48,4 +48,3 @@ function [blackScreen1, whiteScreen1, blackScreen2, whiteScreen2] = extractscree
     [blackScreen2, whiteScreen2] = separatescreendata(screens2, sectionCol, s2(1));
 
 end
-

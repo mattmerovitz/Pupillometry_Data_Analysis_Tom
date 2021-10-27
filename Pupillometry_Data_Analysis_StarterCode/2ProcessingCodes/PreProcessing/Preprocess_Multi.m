@@ -16,13 +16,17 @@ clear;
 
 % Open .txt file with data and load into scalar structure
 [fileName,pathName] = uigetfile('*.*', 'Choose File to Process','MultiSelect', 'on');
-disp('You selected ' + string(pathName) + string(fileName))
 
 if ischar(fileName)     % if only one file was selected, convert to cell array
     fileName = cellstr(fileName);
 end
 
 numFiles = length(fileName);
+
+% Print out names (and paths) of files selected for this analysis
+for f = 1:numFiles
+    disp('You selected ' + string(pathName) + string(fileName{f}))
+end
 
 for f = 1:numFiles
 
@@ -40,7 +44,7 @@ for f = 1:numFiles
 
     % Save screen and trial data
     cd('../../1Data/4ExtractedData');
-    save(fileName{f}(1:9), 'blackScreen1', 'whiteScreen1', 'blackScreen2', 'whiteScreen2', 'trimmedTrials');
+    save(fileName{f}(1:5), 'blackScreen1', 'whiteScreen1', 'blackScreen2', 'whiteScreen2', 'trimmedTrials');
     cd('../../2ProcessingCodes/PreProcessing');
     
 end

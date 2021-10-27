@@ -24,6 +24,6 @@ function [screens1,screens2,trials] = extracttrials(dataTable)
     % Add each trial section to corresponding cell in trials cell array
     for i = 1:size(trials,1)
         disp(i)
-        rowsInSection = ((dataTable{:,trialnoCol} == i) && ~(dataTable{:,trialIndexCol} == 1) && ~(dataTable{:,trialIndexCol} == numSections));
+        rowsInSection = ((dataTable{:,trialnoCol} == i) & ~(dataTable{:,trialIndexCol} == 1) & ~(dataTable{:,trialIndexCol} == numSections));
         trials{i} = dataTable(rowsInSection, colsToInclude);
     end

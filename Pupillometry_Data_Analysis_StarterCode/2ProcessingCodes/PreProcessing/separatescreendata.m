@@ -2,7 +2,7 @@ function [blackScreen,whiteScreen] = separatescreendata(screenData, sectionCol, 
     
     % If all messages were included
     % blackScreen = section #2, whiteScreen = section #3
-    if screenData{dataLength, sectionCol} == 4
+    if screenData{dataLength, sectionCol} == 3
         
         % Save data from black screen
         blackInclude = screenData{:,sectionCol} == 2;
@@ -14,9 +14,9 @@ function [blackScreen,whiteScreen] = separatescreendata(screenData, sectionCol, 
         
     % If a message was lost
     % both screens = section 1, split in half
-    elseif screenData{dataLength, sectionCol} == 3;
+    elseif screenData{dataLength, sectionCol} < 3
         
-        display('SCREEN DATA MESSAGE LOST')
+        disp('SCREEN DATA MESSAGE LOST')
         
         % Isolate screen data
         include = screenData{:,sectionCol} == 2;
@@ -50,4 +50,4 @@ function [blackScreen,whiteScreen] = separatescreendata(screenData, sectionCol, 
     % If more than one message is lost, riase and error
     else
         error('Cannot detect number of screens. More than one message lost in screen data')
-    end;
+    end
