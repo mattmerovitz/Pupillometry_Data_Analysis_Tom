@@ -1,7 +1,7 @@
 function trials = trimtrials(trials)
     
     % Variables
-    sampleMessageCol = 7;
+    sampleMessageCol = 'SAMPLE_MESSAGE';
     pacingCol = 1;
 
     % For each trial

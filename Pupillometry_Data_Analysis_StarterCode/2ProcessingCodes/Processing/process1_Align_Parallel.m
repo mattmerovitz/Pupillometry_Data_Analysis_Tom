@@ -43,10 +43,10 @@ newdataout = cell(1,1);
 pupilCheck = cell(1,1);
 
 %--- Import adjustment timings ---%
-mods = xlsread('EndAlignBuffer.xlsx', 'A1:H96');
-timingMods = num2cell(mods);
+% mods = xlsread('EndAlignBuffer.xlsx', 'A1:H96');
+% timingMods = num2cell(mods);
 
-% timingMods = num2cell(zeros(96,8));
+timingMods = num2cell(zeros(85,8));
 
 
 %===== Re-format data & preprocess ========================================
@@ -62,8 +62,8 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
 
 %--- loop thru subjects: load each subj's data & set up output ----------
 
-parfor sbj=1:length(filenames)
-%     sbj=1;   %run one specific subject
+%parfor sbj=1:length(filenames)
+     sbj=1;   %run one specific subject
     disp('   SUBJ - TRIAL');
     
     cd('../../1Data/4ExtractedData');
@@ -98,7 +98,7 @@ parfor sbj=1:length(filenames)
     runOrd = str2double(tmpID(4));
     for i = 1:length(trimmedTrials)
         newdataout{sbj}(i,2) = runOrd;
-        newdataout{sbj}(i,4) = conditions(i,runOrd)
+        newdataout{sbj}(i,4) = conditions(i,runOrd);
     end
 
     
@@ -245,7 +245,7 @@ parfor sbj=1:length(filenames)
         trialExclusions{sbj} = trialExclusions{sbj} + trlexclude;
         
 
-    end   %end  of trial loop
+    %end   %end  of trial loop
     
 end   %end of subject loop
 
