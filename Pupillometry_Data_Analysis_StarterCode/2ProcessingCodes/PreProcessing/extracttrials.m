@@ -2,8 +2,8 @@ function [screens1,screens2,trials] = extracttrials(dataTable)
 
     % Variables
     numTrials = 8;
-    numSections = dataTable(size(dataTable,(1)),trialIndexCol).TRIAL_INDEX;
     trialIndexCol = 3;
+    numSections = dataTable(size(dataTable,(1)),trialIndexCol).TRIAL_INDEX;
     trialnoCol = 2;
     % Col 6 = LeftPupil; Col 7 = RightPupil; Col 8 = SampleMessages
     colsToInclude = [5 6 7 9 10 11 12];
