@@ -6,11 +6,11 @@ function [blackScreen,whiteScreen] = separatescreendata(screenData, sectionCol, 
         
         % Save data from black screen
         blackInclude = screenData{:,sectionCol} == 2;
-        blackScreen = screenData(blackInclude,1:2);
+        blackScreen = screenData(blackInclude,1:3);
         
         % Save data from white screen
         whiteInclude = screenData{:,sectionCol} == 3;
-        whiteScreen = screenData(whiteInclude,1:2);
+        whiteScreen = screenData(whiteInclude,1:3);
         
     % If a message was lost
     % both screens = section 1, split in half

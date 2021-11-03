@@ -28,7 +28,7 @@ function trials = trimtrials(trials)
         if strncmpi(trial{1,pacingCol}, 'S',1) == 1
             % Keep only data while stim is playing, for each of the
             % separate chunks
-            include = mod(trial{:,s(2)+1},2) == 1;
+            include = trial{:,s(2)+1} == 1 | mod(trial{:,s(2)+1},3) == 2;
             trial = trial(include,:);
         end
         

@@ -6,8 +6,7 @@ function [screens1,screens2,trials] = extracttrials(dataTable)
     numSections = dataTable(size(dataTable,(1)),trialIndexCol).TRIAL_INDEX;
     trialnoCol = 2;
     % Col 6 = LeftPupil; Col 7 = RightPupil; Col 8 = SampleMessages
-    trialEx = trials{1};
-    colsToInclude = [5 6 7 9 10 11 12];
+    colsToInclude = [5 6 7 find(string(dataTable.Properties.VariableNames) == "EYE_TRACKED") find(string(dataTable.Properties.VariableNames) == "LEFT_PUPIL_SIZE") find(string(dataTable.Properties.VariableNames) == "RIGHT_PUPIL_SIZE") find(string(dataTable.Properties.VariableNames) == "SAMPLE_MESSAGE")];
     screensColsToInclude = [find(string(dataTable.Properties.VariableNames) == "EYE_TRACKED") find(string(dataTable.Properties.VariableNames) == "LEFT_PUPIL_SIZE") find(string(dataTable.Properties.VariableNames) == "RIGHT_PUPIL_SIZE") find(string(dataTable.Properties.VariableNames) == "SAMPLE_MESSAGE")];
     
     % Variables to output

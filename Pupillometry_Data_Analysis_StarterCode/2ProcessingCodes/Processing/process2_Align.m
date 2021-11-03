@@ -43,7 +43,7 @@ numSubj = size(newdataout,2);
 
 
 %set up output matrix
-procData = zeros(numSubj*14,1+4+1+2+92+1+2); %sbjID, max&min 1&2, cond, peak amp & latency, 92 bins, peak change, slopes
+procData = zeros(numSubj*27,101); %sbjID, max&min 1&2, cond, peak amp & latency, 92 bins, peak change, slopes
 
 
 % Decide whether to get subset of data
@@ -103,7 +103,7 @@ for sbj=1:numSubj
     dataCheck1{sbj} = curdata;
 
     
-    for r=1:14  % 
+    for r=1:27  % 
         
         currow = currow+1;  %move down one row
         
@@ -120,15 +120,17 @@ for sbj=1:numSubj
         %--- subset data for current condition only -----------------------
         
         % Condition numbering key:
-        %       1 = Canonical       - normal
-        %       2 = Noncanonical    - normal
-        %       3 = Canonical       - pitch
-        %       4 = Noncanical      - pitch
-        %       5 = Canonical       - amplitude
-        %       6 = Noncanonical    - amplitude
-        %       7 = Canonical       - timing
-        %       8 = Noncanonical    - timing
-        % Conditions averaged by cannonicity AND feature removed
+        %       SP = Self-Paced, H = High Probabiity, V = Vocoded, C =
+        %       Continuous, L = Low Probability, U = Unprocessed
+        %       1 = SP, H, V
+        %       2 = SP, H, U
+        %       3 = SP, L, V
+        %       4 = SP, L, U
+        %       5 = C , H, V
+        %       6 = C , H, U
+        %       7 = C , L, V
+        %       8 = C , L, U
+        % Conditions averaged by pacing, cloze-prob, and vocoding
         if r==1, condind = find(curdata(:,4)==1); end
         if r==2, condind = find(curdata(:,4)==2); end
         if r==3, condind = find(curdata(:,4)==3); end
@@ -139,23 +141,62 @@ for sbj=1:numSubj
         if r==8, condind = find(curdata(:,4)==8); end
         
         % Condition numbering key (cont.):
-        %       9 =  Normal
-        %       10 = Pitch
-        %       11 = Amplitude
-        %       12 = Timing
-        % Averaged by feature removed only
-        if r==9, condind = find(curdata(:,4)==1 | curdata(:,4)==2); end
-        if r==10, condind = find(curdata(:,4)==3 | curdata(:,4)==4); end
-        if r==11, condind = find(curdata(:,4)==5 | curdata(:,4)==6); end
-        if r==12, condind = find(curdata(:,4)==7 | curdata(:,4)==8); end
+        %       9 =  H, V
+        %       10 = H, U
+        %       11 = L, V
+        %       12 = L, U
+        % Collapse across pacing
+        if r==9, condind = find(curdata(:,4)==1 | curdata(:,4)==5); end
+        if r==10, condind = find(curdata(:,4)==2 | curdata(:,4)==6); end
+        if r==11, condind = find(curdata(:,4)==3 | curdata(:,4)==7); end
+        if r==12, condind = find(curdata(:,4)==4 | curdata(:,4)==8); end
         
         % Condition numbering key (cont.):
-        %       13 = Canonical
-        %       14 = Noncanonical
-        % Averaged by cannonicity only
-        if r==13, condind = find(curdata(:,4)==1 | curdata(:,4)==3 | curdata(:,4)==5 | curdata(:,4)==7); end
-        if r==14, condind = find(curdata(:,4)==2 | curdata(:,4)==4 | curdata(:,4)==6 | curdata(:,4)==8); end
+        %       13 = SP, V
+        %       14 = C , U
+        %       15 = SP, V
+        %       16 = C , U
+        % Collapse across cloze-prob
+        if r==13, condind = find(curdata(:,4)==1 | curdata(:,4)==3); end
+        if r==14, condind = find(curdata(:,4)==2 | curdata(:,4)==4); end
+        if r==15, condind = find(curdata(:,4)==5 | curdata(:,4)==7); end
+        if r==16, condind = find(curdata(:,4)==6 | curdata(:,4)==8); end
+        
+        % Condition numbering key (cont.):
+        %       17 = SP, H
+        %       18 = SP, L
+        %       19 = C , H
+        %       20 = C , L
+        % Collapse across vocoding
+        if r==17, condind = find(curdata(:,4)==1 | curdata(:,4)==2); end
+        if r==18, condind = find(curdata(:,4)==3 | curdata(:,4)==4); end
+        if r==19, condind = find(curdata(:,4)==5 | curdata(:,4)==6); end
+        if r==20, condind = find(curdata(:,4)==7 | curdata(:,4)==8); end
+        
+        
+        % Condition numbering key (cont.):
+        %       21 = SP
+        %       22 = C
+        % Averaged by pacing only
+        if r==21, condind = find(curdata(:,4)==1 | curdata(:,4)==2 | curdata(:,4)==3 | curdata(:,4)==4); end
+        if r==22, condind = find(curdata(:,4)==5 | curdata(:,4)==6 | curdata(:,4)==7 | curdata(:,4)==8); end
+        
+         % Condition numbering key (cont.):
+        %       23 = H
+        %       24 = L
+        % Averaged by cloze-prob only
+        if r==23, condind = find(curdata(:,4)==1 | curdata(:,4)==2 | curdata(:,4)==5 | curdata(:,4)==6); end
+        if r==24, condind = find(curdata(:,4)==3 | curdata(:,4)==4 | curdata(:,4)==7 | curdata(:,4)==8); end
 
+         % Condition numbering key (cont.):
+        %       25 = V
+        %       26 = U
+        % Averaged by vocoding only
+        if r==25, condind = find(curdata(:,4)==1 | curdata(:,4)==3 | curdata(:,4)==5 | curdata(:,4)==7); end
+        if r==26, condind = find(curdata(:,4)==2 | curdata(:,4)==4 | curdata(:,4)==6 | curdata(:,4)==8); end
+       
+        % All trials
+        if r==27, condind = find(curdata(:,4)~=0); end
         conddata = curdata(condind,:);       %subset current condition data
         %------------------------------------------------------------------
         
@@ -163,7 +204,7 @@ for sbj=1:numSubj
         
         %--- calculate mean pupil/bin for current condition ---------------
         for b=9:100
-            procData(currow,b) = nanmean(conddata(:,b));  %fill in procData cols 9-100
+            procData(currow,b) = nanmean(conddata(:,b));  %fill in procData cols 10-101
         end
         %------------------------------------------------------------------
         

@@ -46,7 +46,7 @@ pupilCheck = cell(1,1);
 % mods = xlsread('EndAlignBuffer.xlsx', 'A1:H96');
 % timingMods = num2cell(mods);
 
-timingMods = num2cell(zeros(85,8));
+timingMods = num2cell(zeros(8,4));
 
 
 %===== Re-format data & preprocess ========================================
@@ -55,7 +55,7 @@ timingMods = num2cell(zeros(85,8));
 trialExclusions = num2cell(zeros(length(filenames), 1));
 
 % Load in condition data
-conditions = xlsread('conditions.xlsx', 'C3:J98');
+%conditions = xlsread('conditions.xlsx', 'C3:J98');
 
 
 % numBadTrials = 0;
@@ -76,7 +76,7 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
     blackScreen2 = d.blackScreen2;
     
     tmpID=char(filenames(sbj));
-    curSbjID = str2double(tmpID(1:4));
+    curSbjID = str2double(tmpID(3:5));
     
     sbjdataout=zeros(length(trimmedTrials),100); %nrows = ntrials: 96
                                                  %ncols =  nbins: 93 (8-100)
@@ -95,10 +95,28 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
 
                                                  
     %--- Determine running order & Select condition data for running order ---
-    runOrd = str2double(tmpID(4));
+    % Condition codes
+    %	1   =   Self-Paced   High-Predict   Vocoded
+    %	2   =   Self-Paced   High-Predict   Unprocessed
+    %	3   =   Self-Paced   Low-Predict    Vocoded
+    %	4   =   Self-Paced   Low-Predict    Unprocessed
+    %	5   =   Continuous   High-Predict   Vocoded
+    %	6   =   Continuous   High-Predict   Unprocessed
+    %	7   =   Continuous   Low-Predict    Vocoded
+    %	8   =   Continuous   Low-Predict    Unprocessed
     for i = 1:length(trimmedTrials)
-        newdataout{sbj}(i,2) = runOrd;
-        newdataout{sbj}(i,4) = conditions(i,runOrd);
+        condition = 1;
+        trl = trimmedTrials{1,i};
+        if strcmpi(trl{1,1},('C '))
+            condition = condition + 4;
+        end
+        if strcmpi(trl{1,2},('L'))
+            condition = condition + 2;
+        end
+        if strcmpi(trl{1,3},('U'))
+            condition = condition + 1;
+        end
+        newdataout{sbj}(i,4) = condition;
     end
 
     
@@ -114,12 +132,15 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
         blackScr(i,2) = str2double(table2array(blackScreen1(i,2)));
     end
     
-    dataCol = 0;
+    trialsDataCol = 0;
+    screensDataCol = 0;
     blackScrMeans = nanmean(blackScr);
-    if ~isnan(blackScrMeans(1))
-        dataCol = 1;
-    elseif ~isnan(blackScrMeans(2))
-        dataCol = 2;
+    if isnan(blackScrMeans(1))
+        screensDataCol = 2;
+        trialsDataCol = 5;
+    elseif isnan(blackScrMeans(2))
+        screensDataCol = 3;
+        trialsDataCol = 6;
     else
         display(horzcat('Data column not found in subj: ', curSbjID));
     end
@@ -138,8 +159,8 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
     
     
     % Convert black and white screen data from strings to doubles
-    [max1,min1] = getScreenMaxMin(blackScreen1(:,dataCol), whiteScreen1(:,dataCol));
-    [max2,min2] = getScreenMaxMin(blackScreen2(:,dataCol), whiteScreen2(:,dataCol));
+    [max1,min1] = getScreenMaxMin(blackScreen1(:,screensDataCol), whiteScreen1(:,screensDataCol));
+    [max2,min2] = getScreenMaxMin(blackScreen2(:,screensDataCol), whiteScreen2(:,screensDataCol));
     
     % Add daynamic ranges to data sheet
     for i = 1:length(trimmedTrials)
@@ -196,7 +217,7 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
         newdataout{sbj}(t,3) = t;
         
         %extract data table for current trial:
-        curTrl=trimmedTrials{t};
+        curTrl=trimmedTrials{1,t};
         
                 
         
@@ -205,29 +226,12 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
         curMsgs = curTrl.SAMPLE_MESSAGE;
         for m=1:size(curMsgs,1)
             if isletter(curMsgs(m,1))
-                
-                if strcmp(curMsgs(m,1),'B'), trialFlagInd(1,1)=m; end   %notes index of 'Blank screen baseline'
-                if strcmp(curMsgs(m,12),'s'), trialFlagInd(2,1)=m; end   %notes index of 'Sound file start'
-                if strcmp(curMsgs(m,12),'e'), trialFlagInd(3,1)=m; end   %notes index of 'Sound file end'
+                sndBegin = m;
             end
         end
-        
-        % name trial index flag variables
-        trlBegin = trialFlagInd(1);
-        sndBegin = trialFlagInd(2);
-        sndEnd = trialFlagInd(3);
-
-        if trialFlagInd(1)~=1
-            warning('Sample 1 does not appear to be the start of trial %d for subject %d.', t, curSbjID); 
-            newdataout{sbj}(t,1:100) = NaN;
-            continue; 
-        end
-        if trialFlagInd(2)<2000-50 || trialFlagInd(2)>2000+50, warning('Pre-sentence baseline may be off for this trial.'); end
-        if trialFlagInd(3)<(size(curMsgs,1)-2000)-50 || trialFlagInd(3)>(size(curMsgs,1)-2000)+50, warning('Post-sentence baseline may be off for this trial.'); end
-
-        
+        sndBegin = 4000;
         %extract pupil data into a matrix
-        curPupilCol = curTrl(:,dataCol);
+        curPupilCol = curTrl(:,trialsDataCol);
         curPupilSize = size(curPupilCol);
         curPupils = zeros(curPupilSize(1),1);
         for pp=1:length(curPupils)
@@ -238,7 +242,7 @@ conditions = xlsread('conditions.xlsx', 'C3:J98');
 %~~~~~ TRIAL DATA SET UP COMPLETE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         %~~~~~ deblink, z-score, smooth, bin ~~~~~
-        [trldataout,trlexclude] = deblink_Align_Parallel(curPupils, timingMods, sndBegin, runOrd, curSbjID, t, minPupil, maxPupil);
+        [trldataout,trlexclude] = deblink_Align_Parallel(curPupils, timingMods, sndBegin, 1, curSbjID, t, minPupil, maxPupil);
         %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
         newdataout{sbj}(t,9:100) = trldataout(9:100);

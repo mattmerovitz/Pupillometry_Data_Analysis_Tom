@@ -84,7 +84,7 @@ function [trialExclusion, curPupils, numBlinks, sbjdataout] = deblink(curPupils,
 
     %#########  Print out proportion of data in trial that is blinking  ###########
     %disp([num2str(sbjID), 'trial number ', num2str(t), ' has proportion of blinking... ', num2str(numBlinks/length(curPupils))]);
-
+    disp(numBlinks/length(curPupils));
     if numBlinks/length(curPupils) > blinkProp  %if more than 15% of samples are blinks,
         curPupils(:)=NaN;                       %replace all pupil data with NaN to exclude trial from analysis
         sbjdataout(1,9:100)=NaN;

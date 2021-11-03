@@ -10,21 +10,21 @@ function [sbjdataout,trialExclusion] = deblink_Align_Parallel(curPupils, timingM
 
         %DEBLINK: Set threshold for too much blinking (NORM IN LITERATURE = 15% (0.15))
         %Exclude dataset if more than blinkProp of the data is blinks.
-        blinkProp = 0.15;   
+        blinkProp = 0.4;   
         
         %SMOOTHING: Set variable to true for moving window average smoothing. Set variable to false
         %for fancy signal processing.
         moving_window_average = false;
         
         %NORMALIZE: Baseline period (milliseconds) for calibrating original pupil size
-        baseline = 2000;
+        baseline = 4000;
         
         %NORMALIZE: Set variable to true for Z-score normalization. Set variable to false
         %for dynamic range normalization
         zscore = false;
         
         %BINNING: Time in milliseconds per bin
-        binSize = 200;
+        binSize = 1000;
         
     %~~~~~ DO NOT EDIT BELOW ME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
     sbjdataout = zeros(1,100);
